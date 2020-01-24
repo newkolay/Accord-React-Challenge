@@ -1,19 +1,22 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Colors, FontSizes } from '../../lib/style-guide'
-import logoPlaceholder from '../../assets/images/logo-placeholder.svg'
 import { DropArea } from '../shared/drop-area'
+import { CircularProgress } from './circular-progress'
+import uploadFile from '../../lib/upload-file'
 
-const LogoUpload: FC<{
-  uri: string
-  onChange(Array: string): void
-}> = ({ uri, onChange, className }) => {
-  const inputChange = (e: React.FormEvent<HTMLInputElement>) => {
-    console.log(e.currentTarget)
+const LogoUpload: FC<{}> = ({ className }) => {
+  const [progress, setProgress] = useState(0)
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files !== null) {
+      const file = e.target.files[0]
+      uploadFile(file, setProgress)
+    }
   }
 
-  const handleDrop = (file: FileList) => {
-    console.log(file)
+  const handleDrop = (files: FileList) => {
+    const file = files[0]
+    uploadFile(file, setProgress)
   }
 
   return (
@@ -27,9 +30,7 @@ const LogoUpload: FC<{
       <div className="mainContent">
         <DropArea onDrop={handleDrop}>
           <form>
-            <div className="logoContainer">
-              <img src={logoPlaceholder} />
-            </div>
+            <CircularProgress progress={progress} />
             <p className="status">Drag & drop here</p>
             <p className="or">- or -</p>
             <input
@@ -37,7 +38,7 @@ const LogoUpload: FC<{
               type="file"
               id="uploadLogo"
               accept="image/jpeg, image/png"
-              onChange={inputChange}
+              onChange={handleInput}
             ></input>
             <label className="actionButton" htmlFor="uploadLogo">
               Select file to upload
@@ -79,21 +80,11 @@ const StyledLogoUpload = styled(LogoUpload)`
     align-items: center;
     padding: 19px 19px 20px 19px;
   }
-  .logoContainer {
-    width: 80px;
-    height: 80px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    border: 1px solid ${Colors.Border};
-    background-color: ${Colors.PureWhite};
-    margin-bottom: 9px;
-  }
   .status {
     ${FontSizes.medium};
     color: ${Colors.TX2};
     margin-bottom: 8px;
+    margin-top: 9px;
   }
   .or {
     ${FontSizes.medium};
