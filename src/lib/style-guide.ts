@@ -8,6 +8,7 @@ export enum Colors {
   // Primary
   AccordBlue = '#1b76de',
   Border = '#d1e3f8',
+  AccordBlueSecondary = '#4991E5',
 
   // Standard
   PureWhite = '#ffffff',
@@ -33,10 +34,7 @@ export enum Colors {
   // Background
   BG1 = '#d1e3f8',
   BG2 = '#e8f1fb',
-  BG3 = '#f5f9ff',
-
-  // Buttons
-  TextButton = '#4991E5'
+  BG3 = '#f5f9ff'
 }
 
 export enum FontSizes {

@@ -2,11 +2,20 @@ import React from 'react'
 import styled from 'styled-components'
 import { Colors, FontSizes } from '../../lib/style-guide'
 import logoPlaceholder from '../../assets/images/logo-placeholder.svg'
+import { DropArea } from '../shared/drop-area'
 
 const LogoUpload: FC<{
   uri: string
   onChange(Array: string): void
 }> = ({ uri, onChange, className }) => {
+  const inputChange = (e: React.FormEvent<HTMLInputElement>) => {
+    console.log(e.currentTarget)
+  }
+
+  const handleDrop = (file: FileList) => {
+    console.log(file)
+  }
+
   return (
     <div className={className}>
       <div className="header">
@@ -16,12 +25,25 @@ const LogoUpload: FC<{
         </p>
       </div>
       <div className="mainContent">
-        <div className="logoContainer">
-          <img src={logoPlaceholder} />
-        </div>
-        <p className="status">Drag & drop here</p>
-        <p className="or">- or -</p>
-        <button className="actionButton">Select file to upload</button>
+        <DropArea onDrop={handleDrop}>
+          <form>
+            <div className="logoContainer">
+              <img src={logoPlaceholder} />
+            </div>
+            <p className="status">Drag & drop here</p>
+            <p className="or">- or -</p>
+            <input
+              className="fileInput"
+              type="file"
+              id="uploadLogo"
+              accept="image/jpeg, image/png"
+              onChange={inputChange}
+            ></input>
+            <label className="actionButton" htmlFor="uploadLogo">
+              Select file to upload
+            </label>
+          </form>
+        </DropArea>
       </div>
     </div>
   )
@@ -55,6 +77,7 @@ const StyledLogoUpload = styled(LogoUpload)`
     justify-content: center;
     line-height: 1;
     align-items: center;
+    padding: 19px 19px 20px 19px;
   }
   .logoContainer {
     width: 80px;
@@ -64,6 +87,7 @@ const StyledLogoUpload = styled(LogoUpload)`
     align-items: center;
     border-radius: 50%;
     border: 1px solid ${Colors.Border};
+    background-color: ${Colors.PureWhite};
     margin-bottom: 9px;
   }
   .status {
@@ -76,9 +100,12 @@ const StyledLogoUpload = styled(LogoUpload)`
     color: ${Colors.TX3};
     margin-bottom: 4px;
   }
+  .fileInput {
+    display: none;
+  }
   .actionButton {
     ${FontSizes.medium};
-    color: ${Colors.TextButton};
+    color: ${Colors.AccordBlueSecondary};
     background: none;
     border: none;
     margin: 0;
@@ -88,6 +115,11 @@ const StyledLogoUpload = styled(LogoUpload)`
     &:hover {
       text-decoration: underline;
     }
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 `
 
