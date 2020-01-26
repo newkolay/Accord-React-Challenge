@@ -1,117 +1,114 @@
-import React, { useState } from 'react'
-import styled from 'styled-components'
-import { Colors, FontSizes } from '../../lib/style-guide'
+import React, { useState, createContext } from 'react'
 import { DropArea } from '../shared/drop-area'
-import { CircularProgress } from './circular-progress'
+import { CircularProgress } from './components/circular-progress'
 import uploadFile from '../../lib/upload-file'
+import getArrayBuffer from '../../lib/get-array-buffer'
+import { Header } from './components/header'
+import { Logo } from './components/logo'
+import { FileInput } from './components/file-input'
+import { ButtonAsText } from '../shared/button-as-text'
+import { Wrapper, MainContent, Instructions, TX3Text } from './styles'
 
-const LogoUpload: FC<{}> = ({ className }) => {
+enum Status {
+  default = 'Default',
+  uploading = 'Uploading',
+  success = 'Success'
+}
+
+const xhr = new XMLHttpRequest()
+
+const LogoUpload: FC<{
+  value: string
+  onChange(buffer: ArrayBuffer): void
+}> = ({ value, onChange }) => {
   const [progress, setProgress] = useState(0)
+  const [status, setStatus] = useState<Status>(Status.default)
+
+  const upload = async (files: FileList) => {
+    const file = files[0]
+    console.log(file)
+    setStatus(Status.uploading)
+    try {
+      await uploadFile(xhr, file, setProgress)
+      const buffer = await getArrayBuffer(file)
+      onChange(buffer)
+      setStatus(Status.success)
+      setProgress(0)
+    } catch (e) {
+      setStatus(Status.default)
+      setProgress(0)
+    }
+  }
+
+  const cancelRequest = () => {
+    xhr.abort()
+  }
+
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files !== null) {
-      const file = e.target.files[0]
-      uploadFile(file, setProgress)
+      upload(e.target.files)
+      //clear input value to allow upload the same file
+      e.target.value = ''
     }
   }
 
   const handleDrop = (files: FileList) => {
-    const file = files[0]
-    uploadFile(file, setProgress)
+    upload(files)
   }
 
   return (
-    <div className={className}>
-      <div className="header">
-        <h1 className="title">Company Logo</h1>
-        <p className="subTitle">
-          Logo should be square, 100px size and in png, jpeg file format.
-        </p>
-      </div>
-      <div className="mainContent">
+    <Wrapper>
+      <Header />
+      <MainContent>
         <DropArea onDrop={handleDrop}>
           <form>
-            <CircularProgress progress={progress} />
-            <p className="status">Drag & drop here</p>
-            <p className="or">- or -</p>
-            <input
-              className="fileInput"
-              type="file"
-              id="uploadLogo"
-              accept="image/jpeg, image/png"
-              onChange={handleInput}
-            ></input>
-            <label className="actionButton" htmlFor="uploadLogo">
-              Select file to upload
-            </label>
+            {status == Status.success ? (
+              <Logo image={value} />
+            ) : (
+              <CircularProgress progress={progress} />
+            )}
+
+            <Instructions>{renderInstructions(status)}</Instructions>
+            <TX3Text>- or -</TX3Text>
+
+            {renderAction({ status, handleInput, cancelRequest })}
           </form>
         </DropArea>
-      </div>
-    </div>
+      </MainContent>
+    </Wrapper>
   )
 }
 
-const StyledLogoUpload = styled(LogoUpload)`
-  width: 400px;
-  height: 590px;
-  align-self: center;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid ${Colors.BG2};
-  background-color: ${Colors.PureWhite};
-  .header {
-    border-bottom: 1px solid ${Colors.BG2};
-    padding: 21px 24px 18px 29px;
+const renderInstructions = (status: Status) => {
+  switch (status) {
+    case Status.default:
+      return 'Drag & drop here'
+    case Status.uploading:
+      return 'Uploading'
+    case Status.success:
+      return 'Drag & drop here to replace'
   }
-  .title {
-    ${FontSizes.title};
-    color: ${Colors.TX1};
-  }
-  .subTitle {
-    ${FontSizes.medium};
-    color: ${Colors.TX3};
-  }
-  .mainContent {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    justify-content: center;
-    line-height: 1;
-    align-items: center;
-    padding: 19px 19px 20px 19px;
-  }
-  .status {
-    ${FontSizes.medium};
-    color: ${Colors.TX2};
-    margin-bottom: 8px;
-    margin-top: 9px;
-  }
-  .or {
-    ${FontSizes.medium};
-    color: ${Colors.TX3};
-    margin-bottom: 4px;
-  }
-  .fileInput {
-    display: none;
-  }
-  .actionButton {
-    ${FontSizes.medium};
-    color: ${Colors.AccordBlueSecondary};
-    background: none;
-    border: none;
-    margin: 0;
-    padding: 0;
-    line-height: 1;
-    cursor: pointer;
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-  form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-`
+}
 
-export { StyledLogoUpload as LogoUpload }
+interface RenderAction {
+  status: Status
+  handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void
+  cancelRequest: () => void
+}
+
+const renderAction = ({ status, handleInput, cancelRequest }: RenderAction) => {
+  switch (status) {
+    case Status.default:
+      return (
+        <FileInput onChange={handleInput} label={'Select file to upload'} />
+      )
+    case Status.uploading:
+      return <ButtonAsText onClick={cancelRequest} text={'Cancel'} />
+    case Status.success:
+      return (
+        <FileInput onChange={handleInput} label={'Select file to replace'} />
+      )
+  }
+}
+
+export default LogoUpload

@@ -1,26 +1,30 @@
 export default function uploadFile(
+  xhr: XMLHttpRequest,
   file: File,
   setProgress: React.Dispatch<React.SetStateAction<number>>
 ) {
-  const xhr = new XMLHttpRequest()
+  return new Promise(function(resolve, reject) {
+    const url =
+      'https://storage.googleapis.com/newkolay-accord/logo?x-goog-signature=07a7cd54330c2e344030104a7ee515f3b7e16f2c2db960ec0903b376d100815abc4af4d041a39fe5bbea128d548f3ce7b0c5128b713c9713693d657ada591755f61493627234ad923ebe380b6dd6688dea63a70f39a2f1f4168272d1d2b3b824e254c97c31390f436a14aecc8713b6cc7f1f9cbff895a4446fa439d97a569a759c606f7f3ac2577203a99217b93438b3b1522baae08a4997defc7170c837d8da29c4929df44b786e1860f2b7d48fad4310d6e408a3cbbda618d2fd0be26b9f33d7be193024fb03dc8526d2d2c6ff1f17c32932010dfb9ffdfe1b1fe88da1b7c3f147899f785df0393b9a749402737bcf0fa7de843aa4a278147d8fee90903be5&x-goog-algorithm=GOOG4-RSA-SHA256&x-goog-credential=upload-logo%40accord-react-challenge.iam.gserviceaccount.com%2F20200126%2Fus%2Fstorage%2Fgoog4_request&x-goog-date=20200126T134509Z&x-goog-expires=604800&x-goog-signedheaders=host'
+    xhr.open('PUT', url, true)
+    xhr.setRequestHeader('Content-Type', file.type)
 
-  const url =
-    'https://storage.googleapis.com/newkolay-accord/image.png?x-goog-signature=0f9fc5215f106ab1e551da64c8d8cecdd9cd50313106b9f2a2486b8bd668b06730e19ffe4de2c851de471664a404b2b0796a0d555ebe5e1ebaf38187e07f1d7b806bf269a62e99e0d87be0d08c048335ebbb89eca566612dd86c9316125c121b778fb7ce64c91535c101881a55f53882f6fa5e38d7280039c0460451e07d4200cba30484f3ac2760232fd72fc77680fa70369c38d0523faa54212cd3a2a0fbeb32b4a6531506459e282a551210872a8780339ca33719624f52fd7bd2b55e41561fff321de2941be589c2281a8da7613c17e7e1b74765416f87c111eef7683a9ace963504d4b19e83770aab617d227c46414f2133495bd39cd4e10de405a11270&x-goog-algorithm=GOOG4-RSA-SHA256&x-goog-credential=upload-logo%40accord-react-challenge.iam.gserviceaccount.com%2F20200124%2Fus%2Fstorage%2Fgoog4_request&x-goog-date=20200124T125841Z&x-goog-expires=259200&x-goog-signedheaders=content-type%3Bhost'
-  xhr.open('PUT', url, true)
-  xhr.setRequestHeader('Content-Type', file.type)
+    xhr.upload.addEventListener('progress', function(e) {
+      const percentage = (e.loaded * 100.0) / e.total || 100
+      setProgress(percentage)
+    })
 
-  xhr.upload.addEventListener('progress', function(e) {
-    const percentage = (e.loaded * 100.0) / e.total || 100
-    setProgress(percentage)
+    xhr.addEventListener('readystatechange', function() {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        resolve(xhr.response)
+      } else if (xhr.readyState == 4 && xhr.status != 200) {
+        reject({
+          status: xhr.status,
+          statusText: xhr.statusText
+        })
+      }
+    })
+
+    xhr.send(file)
   })
-
-  xhr.addEventListener('readystatechange', function(e) {
-    if (xhr.readyState == 4 && xhr.status == 200) {
-      console.log(e)
-    } else if (xhr.readyState == 4 && xhr.status != 200) {
-      console.log(e)
-    }
-  })
-
-  xhr.send(file)
 }

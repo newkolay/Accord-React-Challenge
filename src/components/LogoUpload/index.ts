@@ -1,3 +1,3 @@
-import { LogoUpload } from './logo-upload'
+import LogoUpload from './logo-upload'
 
 export default LogoUpload

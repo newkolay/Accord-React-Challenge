@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Colors } from '../../lib/style-guide'
-import logoPlaceholder from '../../assets/images/logo-placeholder.svg'
+import { Colors } from '../../../lib/style-guide'
+import logoPlaceholder from '../../../icons/logo-placeholder.svg'
 
 const sqSize = 80
 const strokeWidth = 1
