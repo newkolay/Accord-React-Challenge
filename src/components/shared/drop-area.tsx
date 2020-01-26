@@ -2,6 +2,11 @@ import React, { useRef, useLayoutEffect, useCallback } from 'react'
 import styled from 'styled-components'
 import { Colors } from '../../lib/style-guide'
 
+const preventAndStop = (e: DragEvent) => {
+  e.preventDefault()
+  e.stopPropagation()
+}
+
 const DropArea: FC<{ onDrop(file: FileList): void }> = ({
   className,
   children,
@@ -12,16 +17,14 @@ const DropArea: FC<{ onDrop(file: FileList): void }> = ({
   const counter = useRef(0)
 
   const handleDragEnter = (e: DragEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
+    preventAndStop(e)
     dropRef.current?.classList.add('dragIn')
     // add 1 for nested element
     counter.current = counter.current + 1
   }
 
   const handleDragLeave = (e: DragEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
+    preventAndStop(e)
     counter.current = counter.current - 1
     // return if nested element
     if (counter.current > 0) return
@@ -29,14 +32,12 @@ const DropArea: FC<{ onDrop(file: FileList): void }> = ({
   }
 
   const handleDragOver = (e: DragEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
+    preventAndStop(e)
   }
 
   const handleDrop = useCallback(
     (e: DragEvent) => {
-      e.preventDefault()
-      e.stopPropagation()
+      preventAndStop(e)
       dropRef.current?.classList.remove('dragIn')
       counter.current = 0
       if (

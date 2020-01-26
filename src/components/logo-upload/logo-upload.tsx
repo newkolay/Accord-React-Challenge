@@ -1,8 +1,8 @@
 import React, { useState, createContext } from 'react'
 import { DropArea } from '../shared/drop-area'
 import { CircularProgress } from './components/circular-progress'
-import uploadFile from '../../lib/upload-file'
-import getArrayBuffer from '../../lib/get-array-buffer'
+import { uploadFile } from '../../lib/upload-file'
+import { getArrayBuffer } from '../../lib/get-array-buffer'
 import { Header } from './components/header'
 import { Logo } from './components/logo'
 import { FileInput } from './components/file-input'
@@ -26,7 +26,6 @@ const LogoUpload: FC<{
 
   const upload = async (files: FileList) => {
     const file = files[0]
-    console.log(file)
     setStatus(Status.uploading)
     try {
       await uploadFile(xhr, file, setProgress)
@@ -111,4 +110,4 @@ const renderAction = ({ status, handleInput, cancelRequest }: RenderAction) => {
   }
 }
 
-export default LogoUpload
+export { LogoUpload }

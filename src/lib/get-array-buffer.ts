@@ -1,4 +1,4 @@
-export default function getArrayBuffer(file: File): Promise<ArrayBuffer> {
+export function getArrayBuffer(file: File): Promise<ArrayBuffer> {
   const reader = new FileReader()
 
   return new Promise((resolve, reject) => {

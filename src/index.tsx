@@ -2,12 +2,12 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import styled from 'styled-components'
 import { GlobalStyle } from './global-style'
-import LogoUpload from './components/LogoUpload'
+import { LogoUpload } from './components/logo-upload'
+import { IMAGE_URL } from './config/constants'
 
 console.info(`⚛️ ${React.version}`)
 
-const value =
-  'https://storage.cloud.google.com/newkolay-accord/logo?supportedpurview=project'
+const value = IMAGE_URL
 
 const onChange = (buffer: ArrayBuffer) => {
   console.log(buffer)
