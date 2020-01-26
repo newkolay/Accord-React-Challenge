@@ -1,19 +1,16 @@
-import React, { useState, createContext } from 'react'
+import React, { useState } from 'react'
 import { DropArea } from '../shared/drop-area'
 import { CircularProgress } from './components/circular-progress'
 import { uploadFile } from '../../lib/upload-file'
 import { getArrayBuffer } from '../../lib/get-array-buffer'
 import { Header } from './components/header'
 import { Logo } from './components/logo'
-import { FileInput } from './components/file-input'
-import { ButtonAsText } from '../shared/button-as-text'
+import {
+  Status,
+  renderInstructions,
+  renderAction
+} from './helpers/render-from-status'
 import { Wrapper, MainContent, Instructions, TX3Text } from './styles'
-
-enum Status {
-  default = 'Default',
-  uploading = 'Uploading',
-  success = 'Success'
-}
 
 const xhr = new XMLHttpRequest()
 
@@ -76,38 +73,6 @@ const LogoUpload: FC<{
       </MainContent>
     </Wrapper>
   )
-}
-
-const renderInstructions = (status: Status) => {
-  switch (status) {
-    case Status.default:
-      return 'Drag & drop here'
-    case Status.uploading:
-      return 'Uploading'
-    case Status.success:
-      return 'Drag & drop here to replace'
-  }
-}
-
-interface RenderAction {
-  status: Status
-  handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void
-  cancelRequest: () => void
-}
-
-const renderAction = ({ status, handleInput, cancelRequest }: RenderAction) => {
-  switch (status) {
-    case Status.default:
-      return (
-        <FileInput onChange={handleInput} label={'Select file to upload'} />
-      )
-    case Status.uploading:
-      return <ButtonAsText onClick={cancelRequest} text={'Cancel'} />
-    case Status.success:
-      return (
-        <FileInput onChange={handleInput} label={'Select file to replace'} />
-      )
-  }
 }
 
 export { LogoUpload }
