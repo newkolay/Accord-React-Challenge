@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { FontSizes, Colors } from '../../lib/style-guide'
+import { FontSizes, Colors } from '../../../lib/style-guide'
 
 const ButtonAsText: FC<{ text: string; onClick(): void }> = ({
   className,

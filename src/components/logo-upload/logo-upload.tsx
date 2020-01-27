@@ -3,16 +3,28 @@ import { DropArea } from '../shared/drop-area'
 import { CircularProgress } from './components/circular-progress'
 import { uploadFile } from '../../lib/upload-file'
 import { getArrayBuffer } from '../../lib/get-array-buffer'
+import { validateImage } from '../../lib/validate-image'
 import { Header } from './components/header'
 import { Logo } from './components/logo'
-import {
-  Status,
-  renderInstructions,
-  renderAction
-} from './helpers/render-from-status'
-import { Wrapper, MainContent, Instructions, TX3Text } from './styles'
+import { Wrapper, MainContent, Instructions, Alternative } from './styles'
+import { ButtonAsText } from './components/button-as-text'
+import { FileInput } from './components/file-input'
+import { FILE_UPLOAD_STATUS as Status } from '../../config/constants'
 
+const ACCEPTED_FORMATS = ['image/png', 'image/jpeg']
+const ACCEPTED_SIZE = 100
 const xhr = new XMLHttpRequest()
+
+const renderInstructions = (status: Status) => {
+  switch (status) {
+    case Status.default:
+      return 'Drag & drop here'
+    case Status.uploading:
+      return 'Uploading'
+    case Status.success:
+      return 'Drag & drop here to replace'
+  }
+}
 
 const LogoUpload: FC<{
   value: string
@@ -23,16 +35,15 @@ const LogoUpload: FC<{
 
   const upload = async (files: FileList) => {
     const file = files[0]
-    setStatus(Status.uploading)
     try {
-      await uploadFile(xhr, file, setProgress)
-      const buffer = await getArrayBuffer(file)
-      onChange(buffer)
-      setStatus(Status.success)
-      setProgress(0)
+      await validateImage(file, ACCEPTED_FORMATS, ACCEPTED_SIZE)
+      try {
+        await uploadFile(xhr, file, setStatus, setProgress)
+        const buffer = await getArrayBuffer(file)
+        onChange(buffer)
+      } catch (e) {}
     } catch (e) {
-      setStatus(Status.default)
-      setProgress(0)
+      alert(e)
     }
   }
 
@@ -65,9 +76,21 @@ const LogoUpload: FC<{
             )}
 
             <Instructions>{renderInstructions(status)}</Instructions>
-            <TX3Text>- or -</TX3Text>
+            <Alternative>- or -</Alternative>
 
-            {renderAction({ status, handleInput, cancelRequest })}
+            {status == Status.uploading ? (
+              <ButtonAsText onClick={cancelRequest} text={'Cancel'} />
+            ) : (
+              <FileInput
+                onChange={handleInput}
+                formats={ACCEPTED_FORMATS}
+                label={
+                  status == Status.default
+                    ? 'Select file to upload'
+                    : 'Select file to replace'
+                }
+              />
+            )}
           </form>
         </DropArea>
       </MainContent>

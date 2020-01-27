@@ -3,37 +3,37 @@ import styled from 'styled-components'
 import { Colors } from '../../../lib/style-guide'
 import logoPlaceholder from '../../../icons/logo-placeholder.svg'
 
-const sqSize = 80
-const strokeWidth = 1
-const radius = (sqSize - 1) / 2
-const viewBox = `0 0 ${sqSize} ${sqSize}`
-const dashArray = radius * Math.PI * 2
+const SQ_SIZE = 80
+const STROKE_WIDTH = 1
+const RADIUS = (SQ_SIZE - 1) / 2
+const VIEW_BOX = `0 0 ${SQ_SIZE} ${SQ_SIZE}`
+const DASH_ARRAY = RADIUS * Math.PI * 2
 
 const CircularProgress: FC<{ progress: number }> = ({
   className,
   progress = 0
 }) => {
-  const dashOffset = dashArray - (dashArray * progress) / 100
+  const dashOffset = DASH_ARRAY - (DASH_ARRAY * progress) / 100
 
   return (
     <div className={className}>
-      <svg width={sqSize} height={sqSize} viewBox={viewBox}>
+      <svg width={SQ_SIZE} height={SQ_SIZE} viewBox={VIEW_BOX}>
         <circle
           className="circle-background"
-          cx={sqSize / 2}
-          cy={sqSize / 2}
-          r={radius}
-          strokeWidth={`${strokeWidth}px`}
+          cx={SQ_SIZE / 2}
+          cy={SQ_SIZE / 2}
+          r={RADIUS}
+          strokeWidth={`${STROKE_WIDTH}px`}
         />
         <circle
           className="circle-progress"
-          cx={sqSize / 2}
-          cy={sqSize / 2}
-          r={radius}
-          strokeWidth={`${strokeWidth}px`}
-          transform={`rotate(-90 ${sqSize / 2} ${sqSize / 2})`}
+          cx={SQ_SIZE / 2}
+          cy={SQ_SIZE / 2}
+          r={RADIUS}
+          strokeWidth={`${STROKE_WIDTH}px`}
+          transform={`rotate(-90 ${SQ_SIZE / 2} ${SQ_SIZE / 2})`}
           style={{
-            strokeDasharray: dashArray,
+            strokeDasharray: DASH_ARRAY,
             strokeDashoffset: dashOffset
           }}
         />

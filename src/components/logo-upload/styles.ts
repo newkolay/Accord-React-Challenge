@@ -32,10 +32,10 @@ const Instructions = styled.p`
   margin-top: 9px;
 `
 
-const TX3Text = styled.p`
+const Alternative = styled.p`
   ${FontSizes.medium};
   color: ${Colors.TX3};
   margin-bottom: 4px;
 `
 
-export { Wrapper, MainContent, Instructions, TX3Text }
+export { Wrapper, MainContent, Instructions, Alternative }

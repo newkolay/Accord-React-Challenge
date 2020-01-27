@@ -4,15 +4,16 @@ import { FontSizes, Colors } from '../../../lib/style-guide'
 
 const FileInput: FC<{
   onChange(e: React.ChangeEvent<HTMLInputElement>): void
+  formats: Array<string>
   label: string
-}> = ({ className, onChange, label }) => {
+}> = ({ className, onChange, label, formats }) => {
   return (
     <>
       <input
         className={className}
         type="file"
         id="uploadLogo"
-        accept="image/jpeg, image/png"
+        accept={formats.join(',')}
         onChange={onChange}
       ></input>
       <label className="action-button" htmlFor="uploadLogo">

@@ -4,4 +4,10 @@ const API_ENDPOINT =
 const IMAGE_URL =
   'https://storage.cloud.google.com/newkolay-accord/logo?supportedpurview=project'
 
-export { API_ENDPOINT, IMAGE_URL }
+enum FILE_UPLOAD_STATUS {
+  default = 'Default',
+  uploading = 'Uploading',
+  success = 'Success'
+}
+
+export { API_ENDPOINT, IMAGE_URL, FILE_UPLOAD_STATUS }
